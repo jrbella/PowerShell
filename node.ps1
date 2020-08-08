@@ -18,7 +18,7 @@ class Node{
         $this.next_node = [Node]$next_node
     }
 
-    #gets next node
+    #Gets next node
     [Node]get_next_node($next_node){
         return $next_node.value
     }
@@ -55,8 +55,49 @@ class LinkedList{
         }
         return $string_list
     }
+
+    remove_node($value_to_remove){
+        $current_node = $this.head_node
+
+        #Points the head node to the next node if the head node is removed
+        if($this.head_node -eq $value_to_remove){
+            $this.head_node = ($this.head_node).get_next_node()
+        }
+        <#
+            Tricky, so if we have node (a) -> (b) -> (c) and we need to 
+            remove b we need to set (a) next node to c
+        #>
+        else{
+
+            while($current_node){
+                $next_node = $current_node.get_next_node()
+                if($next_node.get_value() -eq $value_to_remove){
+                    $current_node.set_next_node($next_node.get_next_node())
+                    $current_node = $null
+                }
+                else{
+                    $current_node = $next_node
+                }
+
+            }
+        }
+    }
 }
 
+
+Class Stack{
+
+    [Node]$top_item = $null
+
+    Stack($top_item){
+        $this.top_item = $top_item
+    }
+
+    [Node]peek(){
+        return $this.top_item.get_value()
+    }
+
+}
 <#Test Case
     Expects each inserted value in reverse
     this is a precurser to a stack
