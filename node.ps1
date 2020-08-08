@@ -58,7 +58,7 @@ class LinkedList{
 }
 
 <#Test Case
-    Expects each insrted value in reverse
+    Expects each inserted value in reverse
     this is a precurser to a stack
 #>
 $ll = [LinkedList]::new(5)
