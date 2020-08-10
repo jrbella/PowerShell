@@ -3,26 +3,36 @@ class Node{
     [string]$value
     [Node]$next_node
 
-    #PowerShell constructor
     Node($value){
         $this.value = $value
     }
 
-    #Native Data
     [string]get_value(){
         return $this.value
     }
 
-    #Setting node
+    #setting next node
     set_next_node([Node]$next_node){
         $this.next_node = [Node]$next_node
     }
 
-    #Gets next node
     [Node]get_next_node($next_node){
-        return $next_node.value
+        return $next_node.get_value
     }
 }
+
+#tester
+<#
+$IronMan = [Node]::new("Tony Stark")
+$Hulk = [Node]::new("Bruce Banner")
+$BlackWidow = [Node]::new("Sasha Romanov")
+
+$IronMan.set_next_node($Hulk)
+$Hulk.set_next_node($BlackWidow)
+
+
+#>
+
 
 class LinkedList{
 
@@ -31,6 +41,7 @@ class LinkedList{
     LinkedList($value){
         $this.head_node = [Node]::new($value)
     }
+
 
     [Node]get_head_node(){
         return $this.head_node
@@ -41,32 +52,26 @@ class LinkedList{
         $new_node.set_next_node($this.head_node)
         $this.head_node = $new_node
     }
-
+    
     [string]stringify_list(){
         $string_list = ""
         $current_node = $this.get_head_node()
-        
-        #need to run a loop over the nodes to build the linked list
+
         while($current_node){
-            if ($null -ne $current_node.get_value()){
+            if($null -ne $current_node.get_value()){
                 $string_list += [string]($current_node.get_value()) + "`n"
                 $current_node = $current_node.get_next_node()
             }
         }
         return $string_list
     }
-
+    
     remove_node($value_to_remove){
         $current_node = $this.head_node
 
-        #Points the head node to the next node if the head node is removed
         if($this.head_node -eq $value_to_remove){
             $this.head_node = ($this.head_node).get_next_node()
         }
-        <#
-            Tricky, so if we have node (a) -> (b) -> (c) and we need to 
-            remove b we need to set (a) next node to c
-        #>
         else{
 
             while($current_node){
@@ -78,19 +83,20 @@ class LinkedList{
                 else{
                     $current_node = $next_node
                 }
-
             }
+            
         }
     }
 }
 
-
 Class Stack{
 
     [Node]$top_item = $null
+    [int]$size 
+    [int]$limit
 
     Stack($top_item){
-        $this.top_item = $top_item
+        $this.top_item = $top_item 
     }
 
     [Node]peek(){
@@ -98,25 +104,98 @@ Class Stack{
     }
 
     push($value){
-        $item = Node($value)
-        $item.set_next_node($this.top_item)
-        $this.top_item = $item
+        if($this.has_space()){
+            $item = [Node]::new($value)
+            $item.set_next_node($this.top_item)
+            $this.top_item = $item
+        }
+        else{
+            throw "The stack is full"
+        }
     }
 
-
-    #double check return value might be a [Node]?
-    [String]pop(){
+    [string]pop(){
         $item_to_remove = $this.top_item
         $this.top_item.set_next_node($item_to_remove.get_next_node())
         return $item_to_remove.get_value()
     }
+
+    set_stack_size([int]$value){
+        $this.size = $value
+    }
+
+    set_stack_limit([int]$value){
+        $this.limit = $value
+    }
+
+    [Bool]has_space(){
+        return $this.limit > $this.size
+    }
+
+    #helper
 }
-<#Test Case
-    Expects each inserted value in reverse
-    this is a precurser to a stack
-#>
+
+class Queue{
+
+    #setting max size to empty and size to 0 for all
+    #instances
+    $head
+    $tail 
+    $max_size = $null
+    [int]$size = 0
+
+    Queue($head, $tail, $max_size, $size){
+        $this.head = $head
+        $this.tail = $tail
+        $this.max_size = $max_size
+    }
+    
+    [Node]peek(){
+        if($this.size -gt 0){
+            return $this.head.get_value()
+        }
+        else:
+            return  "Nothing in the Queue"
+    }
+
+    [int]get_size(){
+        return $this.size
+    }
+
+    [Bool]has_space(){
+        if($null -eq $this.max_size){
+            return True
+        }
+        else{
+            return $this.max_size > $this.get_size()
+        }
+    }
+
+    [Bool]is_empty(){
+        return $this.size == 0
+    }
+}
+<#
 $ll = [LinkedList]::new(5)
 $ll.insert_beginning(70)
-$ll.insert_beginning(5675)
-$ll.insert_beginning(90)
+$ll.insert_beginning(237847923)
+$ll.insert_beginning(56546)
+$ll.insert_beginning(1)
 $ll.stringify_list()
+
+$ll.remove_node(237847923)
+$ll.stringify_list()
+
+
+#>
+
+#unit test
+<#
+Describe  "linked list"{
+
+    It "value is correct"{
+        [LinkedList]::new(5) | should -BeOfType "LinkedList"
+    }
+}
+
+#>
