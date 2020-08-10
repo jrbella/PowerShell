@@ -97,6 +97,19 @@ Class Stack{
         return $this.top_item.get_value()
     }
 
+    push($value){
+        $item = Node($value)
+        $item.set_next_node($this.top_item)
+        $this.top_item = $item
+    }
+
+
+    #double check return value might be a [Node]?
+    [String]pop(){
+        $item_to_remove = $this.top_item
+        $this.top_item.set_next_node($item_to_remove.get_next_node())
+        return $item_to_remove.get_value()
+    }
 }
 <#Test Case
     Expects each inserted value in reverse
