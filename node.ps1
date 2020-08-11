@@ -149,6 +149,53 @@ class Queue{
         $this.tail = $tail
         $this.max_size = $max_size
     }
+
+    enqueue($value){
+        if($this.has_space()){
+            $item_to_add = [Node]::new($value)
+            Write-Output "Adding " + [string]($item_to_add.get_value()) + " to the queue!"
+            if($this.is_empty()){
+                $this.head = $item_to_add
+                $this.tail = $item_to_add
+            }
+            else{
+                $this.tail.set_next_node($item_to_add)
+                $this.tail = $item_to_add
+            }
+            #adding item to queue, go up by 1
+            $this.size += 1
+        }
+        else{
+            Write-Output "Sorry, the queue is full!"
+        }
+    }
+
+    [Node]dequeue(){
+        #needs to remove the head of the queue
+        if($this.get_size() -gt 0){
+            $item_to_remove = $this.head
+            Write-Output "Removing " + [string]($item_to_remove.get_value() + " from the queue!")
+
+            #check if the queue is only 1 set head and tail null
+            if($this.get_size() -eq 1){
+                $this.head = $null
+                $this.tail = $null
+            }
+            #otherwise just remove the head and set new head node
+            #to the next node
+            else{
+                $this.head = $this.head.get_next_node()
+            }
+            #size reduced after removing node
+            $this.size -= 1
+            return $item_to_remove.get_value()
+        }
+        else:
+            #bug here need to figure out
+            Write-Output "This queue is empty"
+            throw "This queue is empty"
+            return "This queue is empty"
+    }
     
     [Node]peek(){
         if($this.size -gt 0){
